@@ -5,7 +5,7 @@ import checker from 'vite-plugin-checker';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
-  base: process.env.VITE_BASE_PATH || '/',
+  base: '/shopping-list/',
   plugins: [
     react(),
     tsconfigPaths(),
