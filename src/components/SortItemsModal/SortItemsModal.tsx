@@ -3,7 +3,7 @@ import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { SortableContext, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { IconArrowBackUp, IconGripVertical, IconX } from '@tabler/icons-react';
+import { IconArrowBackUp, IconX } from '@tabler/icons-react';
 import {
   ActionIcon,
   Divider,
@@ -13,6 +13,7 @@ import {
   ThemeIcon,
   type MantineStyleProp,
 } from '@mantine/core';
+import DragHandle from '@/components/DragHandle';
 import { useShoppingList } from '@/providers/ShoppingListProvider';
 import type { Category, Item } from '@/types';
 
@@ -135,7 +136,7 @@ interface ItemRecordProps {
 }
 
 const ItemRecord: React.FC<ItemRecordProps> = ({ item }) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+  const { attributes, listeners, transform, transition, isDragging, setNodeRef } = useSortable({
     id: item.id,
   });
 
@@ -152,22 +153,14 @@ const ItemRecord: React.FC<ItemRecordProps> = ({ item }) => {
       py="sm"
       align="center"
       bg="var(--mantine-color-body)"
-      bd="1px solid var(--mantine-color-gray-3)"
+      bd="1px solid var(--mantine-color-default-border)"
       my="-1px"
       style={style}
     >
       <Text c="gray" fw="bold" tt="lowercase" mr="auto">
         {item.name}
       </Text>
-      <ActionIcon
-        variant="subtle"
-        color="gray"
-        {...attributes}
-        {...listeners}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <IconGripVertical size={16} />
-      </ActionIcon>
+      <DragHandle attributes={attributes} listeners={listeners} />
     </Flex>
   );
 };
@@ -211,9 +204,7 @@ const CategoryRecord: React.FC<CategoryRecordProps> = ({ category, onClick }) =>
       <Text c="gray" tt="lowercase" fw="bold" flex="1 0 0">
         {category.name}
       </Text>
-      <ActionIcon variant="subtle" color="gray" {...attributes} {...listeners}>
-        <IconGripVertical size={16} />
-      </ActionIcon>
+      <DragHandle attributes={attributes} listeners={listeners} />
     </Flex>
   );
 };

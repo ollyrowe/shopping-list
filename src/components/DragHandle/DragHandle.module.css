@@ -1,0 +1,4 @@
+.button {
+  cursor: grab;
+  touch-action: none;
+}

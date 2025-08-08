@@ -1,8 +1,9 @@
 import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { IconGripVertical, IconSwitchHorizontal, IconToolsKitchen2 } from '@tabler/icons-react';
+import { IconSwitchHorizontal, IconToolsKitchen2 } from '@tabler/icons-react';
 import { ActionIcon, Flex, Group, Paper, Text, ThemeIcon } from '@mantine/core';
+import DragHandle from '@/components/DragHandle';
 import type { Recipe } from '@/types';
 
 interface RecipeCardProps {
@@ -57,18 +58,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, sortable, onClick, onCh
             <IconSwitchHorizontal size={16} />
           </ActionIcon>
         )}
-        {sortable && (
-          <ActionIcon
-            variant="subtle"
-            color="gray"
-            size="sm"
-            {...attributes}
-            {...listeners}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <IconGripVertical size={16} />
-          </ActionIcon>
-        )}
+        {sortable && <DragHandle attributes={attributes} listeners={listeners} />}
       </Group>
     </Paper>
   );
