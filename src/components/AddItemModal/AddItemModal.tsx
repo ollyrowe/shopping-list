@@ -1,5 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { IconArrowBackUp, IconArrowLeft, IconCategory, IconListCheck } from '@tabler/icons-react';
+import {
+  IconArrowBackUp,
+  IconArrowLeft,
+  IconCategory,
+  IconChevronRight,
+  IconListCheck,
+} from '@tabler/icons-react';
 import { ActionIcon, Box, Button, Divider, Flex, Modal, Text, ThemeIcon } from '@mantine/core';
 import ConfirmationDrawer from '@/components/ConfirmationDrawer';
 import SearchInput from '@/components/SearchInput';
@@ -7,7 +13,6 @@ import { useShoppingList } from '@/providers/ShoppingListProvider';
 import { uncategorisedItemIcon } from '@/services';
 import type { Category, Item } from '@/types';
 import ItemRecord from './ItemRecord';
-import classes from './AddItemModal.module.css';
 
 interface AddItemModalProps {
   open: boolean;
@@ -163,7 +168,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ open, onClose }) => {
                       {visibleCategory ? visibleCategory.icon : uncategorisedItemIcon}
                     </Text>
                   </ThemeIcon>
-                  <Text c="gray" fw="bold">
+                  <Text c="gray" fw="bold" tt="lowercase">
                     {visibleCategory ? visibleCategory.name : 'Uncategorised'}
                   </Text>
                   <ActionIcon
@@ -198,26 +203,20 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ open, onClose }) => {
                 </Flex>
               </>
             ) : (
-              <Box className={classes.categories} p="md">
+              <Box px="md">
                 {categories.map((category) => (
-                  <Button
+                  <CategoryRecord
                     key={category.id}
-                    variant="outline"
-                    justify="space-between"
-                    rightSection={<ThemeIcon variant="subtle">{category.icon}</ThemeIcon>}
+                    name={category.name}
+                    icon={category.icon}
                     onClick={() => setVisibleCategory(category)}
-                  >
-                    {category.name}
-                  </Button>
+                  />
                 ))}
-                <Button
-                  variant="outline"
-                  justify="space-between"
-                  rightSection={<ThemeIcon variant="subtle">{uncategorisedItemIcon}</ThemeIcon>}
+                <CategoryRecord
+                  name="Uncategorised"
+                  icon={uncategorisedItemIcon}
                   onClick={() => setVisibleCategory(null)}
-                >
-                  Uncategorised
-                </Button>
+                />
               </Box>
             )}
           </Modal.Body>
@@ -235,5 +234,25 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ open, onClose }) => {
 };
 
 export default AddItemModal;
+
+interface CategoryRecordProps {
+  name: string;
+  icon: string;
+  onClick: () => void;
+}
+
+const CategoryRecord: React.FC<CategoryRecordProps> = ({ name, icon, onClick }) => {
+  return (
+    <Flex px="md" py="sm" align="center" gap="md" onClick={onClick}>
+      <Text>{icon}</Text>
+      <Text c="gray" fw="bold" tt="lowercase" mr="auto">
+        {name}
+      </Text>
+      <ActionIcon variant="subtle" size="sm" color="gray">
+        <IconChevronRight size={16} />
+      </ActionIcon>
+    </Flex>
+  );
+};
 
 type View = 'all' | 'categories';
