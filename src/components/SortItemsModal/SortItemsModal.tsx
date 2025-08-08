@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { DndContext, type DragEndEvent } from '@dnd-kit/core';
+import { DndContext, DragOverlay, type DragEndEvent, type DragStartEvent } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { SortableContext, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -35,6 +35,28 @@ const SortItemsModal: React.FC<SortItemsModalProps> = ({ open, onClose }) => {
   const sortableItemIds = visibleCategory
     ? visibleCategoryItems.map((item) => item.id)
     : categories.map((category) => category.id);
+
+  const [itemBeingDragged, setItemBeingDragged] = useState<Item>();
+
+  const [categoryBeingDragged, setCategoryBeingDragged] = useState<Category>();
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+
+    if (visibleCategory) {
+      const item = visibleCategoryItems.find((item) => item.id === active.id.toString());
+
+      if (item) {
+        setItemBeingDragged(item);
+      }
+    } else {
+      const category = categories.find((category) => category.id === active.id.toString());
+
+      if (category) {
+        setCategoryBeingDragged(category);
+      }
+    }
+  };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -73,7 +95,11 @@ const SortItemsModal: React.FC<SortItemsModalProps> = ({ open, onClose }) => {
         </Modal.Header>
         <Divider />
         <Modal.Body p={0}>
-          <DndContext modifiers={[restrictToVerticalAxis]} onDragEnd={handleDragEnd}>
+          <DndContext
+            modifiers={[restrictToVerticalAxis]}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+          >
             <SortableContext items={sortableItemIds}>
               {visibleCategory ? (
                 <>
@@ -122,6 +148,10 @@ const SortItemsModal: React.FC<SortItemsModalProps> = ({ open, onClose }) => {
                 </>
               )}
             </SortableContext>
+            <DragOverlay>
+              {itemBeingDragged && <ItemRecord item={itemBeingDragged} overlay />}
+              {categoryBeingDragged && <CategoryRecord category={categoryBeingDragged} overlay />}
+            </DragOverlay>
           </DndContext>
         </Modal.Body>
       </Modal.Content>
@@ -133,9 +163,10 @@ export default SortItemsModal;
 
 interface ItemRecordProps {
   item: Item;
+  overlay?: boolean;
 }
 
-const ItemRecord: React.FC<ItemRecordProps> = ({ item }) => {
+const ItemRecord: React.FC<ItemRecordProps> = ({ item, overlay }) => {
   const { attributes, listeners, transform, transition, isDragging, setNodeRef } = useSortable({
     id: item.id,
   });
@@ -143,7 +174,8 @@ const ItemRecord: React.FC<ItemRecordProps> = ({ item }) => {
   const style: MantineStyleProp = {
     transition,
     transform: CSS.Transform.toString(transform),
-    zIndex: isDragging ? 10000 : undefined,
+    zIndex: overlay ? 10000 : undefined,
+    opacity: isDragging ? 0.5 : 1,
   };
 
   return (
@@ -167,10 +199,11 @@ const ItemRecord: React.FC<ItemRecordProps> = ({ item }) => {
 
 interface CategoryRecordProps {
   category: Category;
-  onClick: () => void;
+  overlay?: boolean;
+  onClick?: () => void;
 }
 
-const CategoryRecord: React.FC<CategoryRecordProps> = ({ category, onClick }) => {
+const CategoryRecord: React.FC<CategoryRecordProps> = ({ category, overlay, onClick }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: category.id,
   });
@@ -180,12 +213,13 @@ const CategoryRecord: React.FC<CategoryRecordProps> = ({ category, onClick }) =>
     cursor: 'pointer',
     position: 'relative',
     transform: CSS.Transform.toString(transform),
-    zIndex: isDragging ? 10000 : undefined,
+    zIndex: overlay ? 10000 : undefined,
+    opacity: isDragging ? 0.5 : 1,
   };
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onClick();
+    onClick?.();
   };
 
   return (

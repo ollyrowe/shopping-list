@@ -9,11 +9,18 @@ import type { Recipe } from '@/types';
 interface RecipeCardProps {
   recipe: Recipe;
   sortable?: boolean;
+  overlay?: boolean;
   onClick?: () => void;
   onChange?: () => void;
 }
 
-const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, sortable, onClick, onChange }) => {
+const RecipeCard: React.FC<RecipeCardProps> = ({
+  recipe,
+  sortable,
+  overlay,
+  onClick,
+  onChange,
+}) => {
   const { attributes, listeners, transform, transition, isDragging, setNodeRef } = useSortable({
     id: recipe.id,
   });
@@ -21,7 +28,8 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, sortable, onClick, onCh
   const style = {
     transition,
     transform: CSS.Transform.toString(transform),
-    zIndex: isDragging ? 1 : undefined,
+    zIndex: overlay ? 1 : undefined,
+    opacity: isDragging ? 0.5 : 1,
     borderLeft: '6px solid',
     borderColor: `var(--mantine-color-${recipe.color}-6)`,
     cursor: onClick ? 'pointer' : undefined,

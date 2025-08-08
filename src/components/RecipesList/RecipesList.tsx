@@ -1,5 +1,5 @@
-import React from 'react';
-import { DndContext, type DragEndEvent } from '@dnd-kit/core';
+import React, { useState } from 'react';
+import { DndContext, DragOverlay, type DragEndEvent, type DragStartEvent } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { SortableContext } from '@dnd-kit/sortable';
 import { Flex, Text, type MantineSpacing, type StyleProp } from '@mantine/core';
@@ -22,10 +22,22 @@ const RecipesList: React.FC<RecipesListProps> = ({
 }) => {
   const { recipes, reorderRecipe } = useRecipes();
 
+  const [recipeBeingDragged, setRecipeBeingDragged] = useState<Recipe>();
+
   // Filter the recipes based on the search value
   const filteredRecipes = recipes.filter((recipe) =>
     recipe.name.toLowerCase().includes(searchValue.toLowerCase())
   );
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+
+    const recipe = filteredRecipes.find((recipe) => recipe.id === active.id.toString());
+
+    if (recipe) {
+      setRecipeBeingDragged(recipe);
+    }
+  };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -37,7 +49,11 @@ const RecipesList: React.FC<RecipesListProps> = ({
 
   return (
     <Flex h="100%" gap="md" direction="column" style={{ overflow: 'auto' }} p={p}>
-      <DndContext modifiers={[restrictToVerticalAxis]} onDragEnd={handleDragEnd}>
+      <DndContext
+        modifiers={[restrictToVerticalAxis]}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
         <SortableContext items={filteredRecipes.map((recipe) => recipe.id)}>
           {filteredRecipes.map((recipe) => (
             <RecipeCard
@@ -53,6 +69,11 @@ const RecipesList: React.FC<RecipesListProps> = ({
             </Text>
           )}
         </SortableContext>
+        <DragOverlay>
+          {recipeBeingDragged && (
+            <RecipeCard recipe={recipeBeingDragged} sortable={sortable} overlay />
+          )}
+        </DragOverlay>
       </DndContext>
     </Flex>
   );
