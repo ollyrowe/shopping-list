@@ -30,7 +30,7 @@ const ConfirmationDrawer: React.FC<ConfirmationDrawerProps> = ({
   };
 
   return (
-    <Drawer.Root opened={open} onClose={onClose} position="bottom" radius="lg">
+    <Drawer.Root opened={open} onClose={onClose} position="bottom" radius="1rem 1rem 0 0">
       <Drawer.Overlay onClick={onClose} />
       <Drawer.Content h="auto">
         <Drawer.Body p={0}>

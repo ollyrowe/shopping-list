@@ -45,7 +45,7 @@ const ItemDrawer: React.FC<ItemDrawerProps> = ({ open, onClose, onChange, item }
 
   return (
     <>
-      <Drawer.Root opened={open} onClose={handleClose} position="bottom" radius="lg">
+      <Drawer.Root opened={open} onClose={handleClose} position="bottom" radius="1rem 1rem 0 0">
         <Drawer.Overlay onClick={onClose} />
         <Drawer.Content h="auto">
           <Drawer.Body p={0}>
