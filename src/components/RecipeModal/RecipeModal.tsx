@@ -211,6 +211,7 @@ const RecipeModal: React.FC<RecipeModalProps> = ({
                 <TextInput
                   value={name}
                   onChange={(e) => setName(e.currentTarget.value)}
+                  placeholder="Recipe name"
                   flex="1 0 0"
                 />
               )}
@@ -422,7 +423,7 @@ const RecipeModal: React.FC<RecipeModalProps> = ({
           {mode !== 'view' && (
             <>
               <Divider />
-              <Modal.Body p="md">
+              <Modal.Body p="md" style={{ overflow: 'auto' }}>
                 <Flex gap="4px">
                   {colours.map((colorOption) => (
                     <ActionIcon
@@ -430,7 +431,7 @@ const RecipeModal: React.FC<RecipeModalProps> = ({
                       onClick={() => setColor(colorOption)}
                       bg={colorOption}
                       variant="subtle"
-                      size="sm"
+                      size="xs"
                       w="100%"
                       h="100%"
                       style={{ aspectRatio: '1 / 1' }}

@@ -18,8 +18,8 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, sortable, onClick, onCh
   });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
     transition,
+    transform: CSS.Transform.toString(transform),
     zIndex: isDragging ? 1 : undefined,
     borderLeft: '6px solid',
     borderColor: `var(--mantine-color-${recipe.color}-6)`,
