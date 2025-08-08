@@ -1,0 +1,12 @@
+.inputContainer {
+  display: grid;
+  grid-template-areas:
+    'quantity-label unit-label empty'
+    'quantity-input unit-input buttons';
+  grid-template-columns: 1fr 1fr auto;
+  gap: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+}
+
+.unitBadge {
+  cursor: pointer;
+}

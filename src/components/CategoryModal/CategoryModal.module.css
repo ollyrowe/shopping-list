@@ -1,0 +1,8 @@
+.contents {
+  display: flex;
+  flex-direction: column;
+}
+
+.scrollContainer {
+  overflow: auto;
+}

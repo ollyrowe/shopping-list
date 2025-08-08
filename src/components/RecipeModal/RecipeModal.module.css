@@ -1,0 +1,3 @@
+.contents > section {
+  border-left: 6px solid var(--mantine-color-blue-6);
+}

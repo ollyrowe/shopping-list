@@ -1,0 +1,4 @@
+.card {
+  border-color: var(--mantine-color-blue-6);
+  border-left: 6px solid var(--mantine-color-blue-6);
+}
