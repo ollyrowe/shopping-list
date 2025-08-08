@@ -5,4 +5,5 @@
 
 .scrollContainer {
   overflow: auto;
+  align-content: flex-start;
 }

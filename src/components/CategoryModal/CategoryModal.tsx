@@ -34,9 +34,11 @@ const CategoryModal: React.FC<CategoryModalProps> = ({ mode, category, open, onC
   const [iconSearchValue, setIconSearchValue] = useState('');
 
   const filteredEmojis = useMemo(() => {
-    if (iconSearchValue.trim()) {
-      return allEmojis.filter((emoji) =>
-        emoji.toLowerCase().includes(iconSearchValue.toLowerCase())
+    const searchValue = iconSearchValue.trim().toLowerCase();
+
+    if (searchValue) {
+      return allEmojis.filter(({ keywords }) =>
+        keywords?.some((keyword) => keyword.toLowerCase().includes(searchValue))
       );
     }
 
@@ -114,7 +116,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({ mode, category, open, onC
               mb="sm"
             />
             <Flex className={classes.scrollContainer} gap="sm" wrap="wrap" flex="1 0 0">
-              {filteredEmojis.map((emoji) => (
+              {filteredEmojis.map(({ emoji }) => (
                 <ActionIcon
                   key={emoji}
                   variant={icon === emoji ? 'outline' : 'subtle'}
@@ -160,7 +162,9 @@ const getAllEmojis = () => {
 
   const categories = Array.from(emojisByCategories);
 
-  return categories.flatMap(([_, emojis]) => emojis.map(({ emoji }) => emoji));
+  return categories.flatMap(([_, emojis]) =>
+    emojis.map(({ emoji, keywords }) => ({ emoji, keywords }))
+  );
 };
 
 const allEmojis = getAllEmojis();
