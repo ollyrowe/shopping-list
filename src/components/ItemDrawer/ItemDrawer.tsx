@@ -25,7 +25,7 @@ const ItemDrawer: React.FC<ItemDrawerProps> = ({ open, onClose, onChange, item }
   const [displayChangeCategoryModal, setDisplayChangeCategoryModal] = useState(false);
 
   const handleClose = () => {
-    if (item && category) {
+    if (item) {
       onChange({ ...item, name, category, quantity, unit });
     }
 
