@@ -54,7 +54,7 @@ const RecipesList: React.FC<RecipesListProps> = ({
   };
 
   return (
-    <Flex h="100%" gap="md" direction="column" style={{ overflow: 'auto' }} p={p}>
+    <Flex h="100%" gap="sm" direction="column" style={{ overflow: 'auto' }} p={p}>
       <DndContext
         modifiers={[restrictToVerticalAxis]}
         onDragStart={handleDragStart}
