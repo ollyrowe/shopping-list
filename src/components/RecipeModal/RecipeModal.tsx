@@ -150,6 +150,7 @@ const RecipeModal: React.FC<RecipeModalProps> = ({
   const handleDeleteRecipe = () => {
     if (recipe) {
       deleteRecipe(recipe);
+      onClose();
     }
   };
 
