@@ -29,7 +29,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
     transition,
     transform: CSS.Transform.toString(transform),
     zIndex: overlay ? 1 : undefined,
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0.2 : 1,
     borderLeft: '6px solid',
     borderColor: `var(--mantine-color-${recipe.color}-6)`,
     cursor: onClick ? 'pointer' : undefined,

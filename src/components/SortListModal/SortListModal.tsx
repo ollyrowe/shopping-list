@@ -184,7 +184,7 @@ const ItemRecord: React.FC<ItemRecordProps> = ({ item, overlay }) => {
     transition,
     transform: CSS.Transform.toString(transform),
     zIndex: overlay ? 10000 : undefined,
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0.2 : 1,
   };
 
   return (
@@ -223,7 +223,7 @@ const CategoryRecord: React.FC<CategoryRecordProps> = ({ category, overlay, onSo
     position: 'relative',
     transform: CSS.Transform.toString(transform),
     zIndex: overlay ? 10000 : undefined,
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0.2 : 1,
   };
 
   const handleSortItems = (e: React.MouseEvent) => {
