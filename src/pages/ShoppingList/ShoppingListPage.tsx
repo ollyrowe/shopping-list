@@ -14,7 +14,7 @@ import {
 import AddItemModal from '@/components/AddItemModal';
 import ChangeCategoryModal from '@/components/ChangeCategoryModal';
 import ItemDrawer from '@/components/ItemDrawer';
-import SortItemsModal from '@/components/SortItemsModal';
+import SortItemsModal from '@/components/SortListModal';
 import { useShoppingList } from '@/providers/ShoppingListProvider';
 import { uncategorisedItemIcon } from '@/services';
 import { type Category, type Item } from '@/types';
@@ -99,7 +99,7 @@ const ShoppingListPage: React.FC = () => {
           px="xs"
           fullWidth
         >
-          Sort items
+          Sort list
         </Button>
       </Box>
       <Progress value={progress} transitionDuration={400} color="green" radius="none" h="4px" />

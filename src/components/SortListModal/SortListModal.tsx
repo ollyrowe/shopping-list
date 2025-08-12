@@ -3,7 +3,7 @@ import { DndContext, DragOverlay, type DragEndEvent, type DragStartEvent } from 
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { SortableContext, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { IconArrowBackUp, IconX } from '@tabler/icons-react';
+import { IconArrowBackUp, IconSortAscendingShapes, IconX } from '@tabler/icons-react';
 import {
   ActionIcon,
   Divider,
@@ -17,12 +17,12 @@ import DragHandle from '@/components/DragHandle';
 import { useShoppingList } from '@/providers/ShoppingListProvider';
 import type { Category, Item } from '@/types';
 
-interface SortItemsModalProps {
+interface SortListModalProps {
   open: boolean;
   onClose: () => void;
 }
 
-const SortItemsModal: React.FC<SortItemsModalProps> = ({ open, onClose }) => {
+const SortListModal: React.FC<SortListModalProps> = ({ open, onClose }) => {
   const { shoppingList, categories, reorderItems, reorderCategories } = useShoppingList();
 
   const [visibleCategory, setVisibleCategory] = useState<Category>();
@@ -94,7 +94,7 @@ const SortItemsModal: React.FC<SortItemsModalProps> = ({ open, onClose }) => {
         <Modal.Header>
           <Flex gap="sm" w="100%" align="center">
             <Text c="gray" size="lg" fw="bold" flex="1 0 0">
-              Sort {visibleCategory ? 'items' : 'categories'}
+              Sort list
             </Text>
             <ActionIcon color="gray" mr="xs" variant="subtle" onClick={onClose}>
               <IconX size={20} />
@@ -146,7 +146,7 @@ const SortItemsModal: React.FC<SortItemsModalProps> = ({ open, onClose }) => {
                     <CategoryRecord
                       key={category.id}
                       category={category}
-                      onClick={() => setVisibleCategory(category)}
+                      onSortItems={() => setVisibleCategory(category)}
                     />
                   ))}
                   {categories.length === 0 && (
@@ -168,7 +168,7 @@ const SortItemsModal: React.FC<SortItemsModalProps> = ({ open, onClose }) => {
   );
 };
 
-export default SortItemsModal;
+export default SortListModal;
 
 interface ItemRecordProps {
   item: Item;
@@ -209,10 +209,10 @@ const ItemRecord: React.FC<ItemRecordProps> = ({ item, overlay }) => {
 interface CategoryRecordProps {
   category: Category;
   overlay?: boolean;
-  onClick?: () => void;
+  onSortItems?: () => void;
 }
 
-const CategoryRecord: React.FC<CategoryRecordProps> = ({ category, overlay, onClick }) => {
+const CategoryRecord: React.FC<CategoryRecordProps> = ({ category, overlay, onSortItems }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: category.id,
   });
@@ -226,9 +226,9 @@ const CategoryRecord: React.FC<CategoryRecordProps> = ({ category, overlay, onCl
     opacity: isDragging ? 0.5 : 1,
   };
 
-  const handleClick = (e: React.MouseEvent) => {
+  const handleSortItems = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onClick?.();
+    onSortItems?.();
   };
 
   return (
@@ -237,7 +237,6 @@ const CategoryRecord: React.FC<CategoryRecordProps> = ({ category, overlay, onCl
       gap="sm"
       align="center"
       ref={setNodeRef}
-      onClick={handleClick}
       bg="var(--mantine-color-body)"
       bd="1px solid var(--mantine-color-default-border)"
       my="-1px"
@@ -247,6 +246,9 @@ const CategoryRecord: React.FC<CategoryRecordProps> = ({ category, overlay, onCl
       <Text c="gray" tt="lowercase" fw="bold" flex="1 0 0">
         {category.name}
       </Text>
+      <ActionIcon color="gray" variant="subtle" onClick={handleSortItems}>
+        <IconSortAscendingShapes size={16} />
+      </ActionIcon>
       <DragHandle attributes={attributes} listeners={listeners} />
     </Flex>
   );
