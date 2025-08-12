@@ -454,7 +454,7 @@ const RecipeModal: React.FC<RecipeModalProps> = ({
                   {mode === 'edit' && (
                     <Button
                       onClick={handleConfirmDeleteRecipe}
-                      rightSection={<IconTrash size={16} color="red" />}
+                      rightSection={<IconTrash size={16} />}
                       disabled={!isRecipeValid}
                       variant="outline"
                       color="red"
