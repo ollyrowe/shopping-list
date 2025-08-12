@@ -42,7 +42,7 @@ const App: React.FC = () => {
   const currentRoute = routes.find((route) => route.path === location.pathname);
 
   return (
-    <MantineProvider theme={theme} forceColorScheme={colorScheme}>
+    <MantineProvider theme={theme} defaultColorScheme="auto" forceColorScheme={colorScheme}>
       <ShoppingListProvider>
         <RecipeProvider>
           <MealPlanProvider>
