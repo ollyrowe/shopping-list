@@ -71,11 +71,12 @@ const MealSelectionDrawer: React.FC<MealSelectionDrawerProps> = ({ open, date, o
   };
 
   /**
-   * Reset the view upon reopening the drawer.
+   * Reset the view and recipe search value upon reopening the drawer.
    */
   useEffect(() => {
     if (open) {
       setDisplayRecipes(false);
+      setRecipeSearchValue('');
     }
   }, [open]);
 
