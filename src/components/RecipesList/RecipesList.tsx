@@ -45,6 +45,12 @@ const RecipesList: React.FC<RecipesListProps> = ({
     if (over && active.id !== over.id) {
       reorderRecipe(active.id.toString(), over.id.toString());
     }
+
+    setRecipeBeingDragged(undefined);
+  };
+
+  const handleDragCancel = () => {
+    setRecipeBeingDragged(undefined);
   };
 
   return (
@@ -53,6 +59,7 @@ const RecipesList: React.FC<RecipesListProps> = ({
         modifiers={[restrictToVerticalAxis]}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
+        onDragCancel={handleDragCancel}
       >
         <SortableContext items={filteredRecipes.map((recipe) => recipe.id)}>
           {filteredRecipes.map((recipe) => (

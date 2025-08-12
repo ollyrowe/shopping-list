@@ -68,6 +68,14 @@ const SortItemsModal: React.FC<SortItemsModalProps> = ({ open, onClose }) => {
         reorderCategories(active.id.toString(), over.id.toString());
       }
     }
+
+    setItemBeingDragged(undefined);
+    setCategoryBeingDragged(undefined);
+  };
+
+  const handleDragCancel = () => {
+    setItemBeingDragged(undefined);
+    setCategoryBeingDragged(undefined);
   };
 
   /**
@@ -99,6 +107,7 @@ const SortItemsModal: React.FC<SortItemsModalProps> = ({ open, onClose }) => {
             modifiers={[restrictToVerticalAxis]}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
+            onDragCancel={handleDragCancel}
           >
             <SortableContext items={sortableItemIds}>
               {visibleCategory ? (
