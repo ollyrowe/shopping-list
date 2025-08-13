@@ -1,3 +1,18 @@
+## [1.0.3](https://github.com/ollyrowe/shopping-list/compare/v1.0.2...v1.0.3) (2025-08-13)
+
+
+### Bug Fixes
+
+* automatically close recipe modal upon deletion ([2fa0a7f](https://github.com/ollyrowe/shopping-list/commit/2fa0a7f72c59a4519ad30c65625838f6ac70ea6e))
+* automatically detect device color scheme ([142f933](https://github.com/ollyrowe/shopping-list/commit/142f933d245d600ce87867c5b5bf18a42d3843e5))
+* fix issue updating items using drawer ([329164f](https://github.com/ollyrowe/shopping-list/commit/329164f3476e02852b93ea43b4798a024d7b814e))
+* fix persisted drag item issue ([984d2c0](https://github.com/ollyrowe/shopping-list/commit/984d2c00f24919eef9dbb18d8d1d33563a911997))
+* fix recipe delete button icon colour ([f1e8a8a](https://github.com/ollyrowe/shopping-list/commit/f1e8a8a01cff2d0fc09c179b655ddabf2be514b2))
+* reduce dragging item opacity ([1601721](https://github.com/ollyrowe/shopping-list/commit/160172175775058fef5411dad7443a3883d55523))
+* reduce recipe list item spacing ([e30f547](https://github.com/ollyrowe/shopping-list/commit/e30f547e6ee7d7d3addc18ad00a6e37834a01dac))
+* reset meal selection drawer recipe search on close ([82476fa](https://github.com/ollyrowe/shopping-list/commit/82476fa6a928a43572bc85894fadf7a4f6ede679))
+* update list sort button and modal ([22b7112](https://github.com/ollyrowe/shopping-list/commit/22b71128d5a748b50d5489266967d4e99fc15484))
+
 ## [1.0.2](https://github.com/ollyrowe/shopping-list/compare/v1.0.1...v1.0.2) (2025-08-08)
 
 
