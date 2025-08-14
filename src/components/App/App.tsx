@@ -3,46 +3,40 @@ import '@mantine/core/styles.css';
 import React, { useState } from 'react';
 import {
   IconCalendarWeek,
-  IconMoon,
+  IconSettings,
   IconShoppingCart,
-  IconSun,
-  IconSunMoon,
   IconToolsKitchen2,
 } from '@tabler/icons-react';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import {
-  ActionIcon,
-  Divider,
-  Flex,
-  MantineProvider,
-  Tabs,
-  Text,
-  ThemeIcon,
-  Title,
-} from '@mantine/core';
+import { ActionIcon, Divider, Flex, Tabs, Text, ThemeIcon, Title } from '@mantine/core';
+import SettingsModal from '@/components/SettingsModal';
+import ThemeProvider from '@/components/ThemeProvider';
 import MealPlanPage from '@/pages/MealPlan';
 import RecipesPage from '@/pages/Recipes';
 import ShoppingListPage from '@/pages/ShoppingList';
 import MealPlanProvider from '@/providers/MealPlanProvider';
 import RecipeProvider from '@/providers/RecipeProvider';
 import ShoppingListProvider from '@/providers/ShoppingListProvider';
-import { theme } from '@/theme';
 
 const App: React.FC = () => {
   const navigate = useNavigate();
 
   const location = useLocation();
 
-  const [colorScheme, setColorScheme] = useState<ColorScheme>();
+  const [displaySettingsModal, setDisplaySettingsModal] = useState(false);
 
-  const toggleColorScheme = () => {
-    setColorScheme(colorScheme === 'light' ? 'dark' : colorScheme === 'dark' ? undefined : 'light');
+  const openSettingsModal = () => {
+    setDisplaySettingsModal(true);
+  };
+
+  const closeSettingsModal = () => {
+    setDisplaySettingsModal(false);
   };
 
   const currentRoute = routes.find((route) => route.path === location.pathname);
 
   return (
-    <MantineProvider theme={theme} defaultColorScheme="auto" forceColorScheme={colorScheme}>
+    <ThemeProvider>
       <ShoppingListProvider>
         <RecipeProvider>
           <MealPlanProvider>
@@ -56,15 +50,9 @@ const App: React.FC = () => {
                   color="gray"
                   radius="xl"
                   ml="auto"
-                  onClick={toggleColorScheme}
+                  onClick={openSettingsModal}
                 >
-                  {colorScheme === 'light' ? (
-                    <IconMoon size={16} />
-                  ) : colorScheme === 'dark' ? (
-                    <IconSunMoon size={16} />
-                  ) : (
-                    <IconSun size={16} />
-                  )}
+                  <IconSettings size={16} />
                 </ActionIcon>
               </Flex>
               <Routes>
@@ -91,10 +79,11 @@ const App: React.FC = () => {
                 </Tabs.List>
               </Tabs>
             </Flex>
+            <SettingsModal open={displaySettingsModal} onClose={closeSettingsModal} />
           </MealPlanProvider>
         </RecipeProvider>
       </ShoppingListProvider>
-    </MantineProvider>
+    </ThemeProvider>
   );
 };
 
@@ -120,5 +109,3 @@ const routes = [
     element: <ShoppingListPage />,
   },
 ];
-
-type ColorScheme = 'light' | 'dark';
