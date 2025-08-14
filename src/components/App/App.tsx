@@ -46,7 +46,7 @@ const App: React.FC = () => {
       <ShoppingListProvider>
         <RecipeProvider>
           <MealPlanProvider>
-            <Flex direction="column" h="100vh ">
+            <Flex direction="column" h="100dvh">
               <Flex px="md" py="xs" align="center">
                 <Title order={2} fw={600} c="gray">
                   {currentRoute?.name}
