@@ -4,7 +4,7 @@ import type { Category, Item, ShoppingList } from '@/types';
 
 interface ShoppingListContextValue {
   shoppingList: ShoppingList;
-  addItem: (item: Pick<Item, 'name'>) => void;
+  addItem: (name: string) => void;
   updateItem: (item: Item) => void;
   deleteItem: (item: Item) => void;
   reorderItems: (sourceId: string, destinationId: string) => void;
@@ -39,8 +39,8 @@ const ShoppingListProvider: React.FC<ShoppingListProviderProps> = ({ children })
 
   const [categories, setCategories] = useState(ShoppingListService.getCategories());
 
-  const addItem = (item: Pick<Item, 'name'>) => {
-    ShoppingListService.addItem({ ...item });
+  const addItem = (name: string) => {
+    ShoppingListService.addItem(name);
 
     setShoppingList(ShoppingListService.getShoppingList());
   };

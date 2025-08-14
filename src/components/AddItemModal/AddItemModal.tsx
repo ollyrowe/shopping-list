@@ -26,6 +26,11 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ open, onClose }) => {
 
   const [searchValue, setSearchValue] = useState('');
 
+  const sanitisedSearchValue = searchValue.toLowerCase().trim();
+
+  // The name of any recently added item to be featured at the top of the list
+  const [recentlyAddedItemName, setRecentlyAddedItemName] = useState('');
+
   // Whether to show all items or items grouped by category
   const [view, setView] = useState<View>('all');
 
@@ -34,24 +39,54 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ open, onClose }) => {
 
   const [itemToDelete, setItemToDelete] = useState<Item>();
 
-  // Filter items based on search value and sort by quantity, with items with quantity first
   const filteredItems = shoppingList.items
-    .filter((item) => item.name.toLowerCase().includes(searchValue.toLowerCase()))
+    // Filter items based on the search value
+    .filter((item) => item.name.toLowerCase().includes(sanitisedSearchValue))
+    // Sort items by quantity, with items with a quantity greater than 0 first
     .sort((a, b) => {
       const aValue = a.quantity > 0;
       const bValue = b.quantity > 0;
 
       return aValue === bValue ? 0 : aValue ? -1 : 1;
+    })
+    // If the item is an exact match to the search value, move it to the top
+    .sort((a, b) => {
+      if (a.name.toLowerCase() === sanitisedSearchValue) {
+        return -1;
+      }
+      if (b.name.toLowerCase() === sanitisedSearchValue) {
+        return 1;
+      }
+      return 0;
+    })
+    // If the item was recently added, move it to the top
+    .sort((a, b) => {
+      if (a.name.toLowerCase() === recentlyAddedItemName.toLowerCase()) {
+        return -1;
+      }
+      if (b.name.toLowerCase() === recentlyAddedItemName.toLowerCase()) {
+        return 1;
+      }
+      return 0;
     });
 
+  // Filter categories based on the search value
+  const filteredCategories = categories.filter((category) =>
+    category.name.toLowerCase().includes(sanitisedSearchValue)
+  );
+
+  // The items related to the selected category
   const visibleCategoryItems = shoppingList.items.filter((item) =>
     visibleCategory === null ? !item.category : item.category?.id === visibleCategory?.id
   );
 
+  // Find an existing item based on the search value
+  const existingItem = filteredItems.find(
+    (item) => item.name.toLowerCase() === sanitisedSearchValue
+  );
+
   // If the search value is not empty and there are no items with that name, show a new item record
-  const displayAddNewItemRecord =
-    searchValue.trim() &&
-    !filteredItems.find((item) => item.name.toLowerCase() === searchValue.toLowerCase());
+  const displayAddNewItemRecord = searchValue.trim() && !existingItem;
 
   const handleAddItem = (item: Item) => {
     updateItem({ ...item, quantity: item.quantity + 1 });
@@ -82,6 +117,33 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ open, onClose }) => {
     setSearchValue('');
   };
 
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+
+      handleAddNewItem();
+    }
+  };
+
+  const handleChangeSearchValue = (value: string) => {
+    setSearchValue(value);
+
+    // Reset the recently added item name
+    setRecentlyAddedItemName('');
+  };
+
+  const handleAddNewItem = () => {
+    if (existingItem) {
+      updateItem({ ...existingItem, quantity: existingItem.quantity + 1 });
+    } else {
+      addItem(sanitisedSearchValue);
+    }
+
+    setRecentlyAddedItemName(sanitisedSearchValue);
+
+    setSearchValue('');
+  };
+
   /**
    * Reset the state when the modal opens.
    */
@@ -94,10 +156,11 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ open, onClose }) => {
   }, [open]);
 
   /**
-   * Reset the visible category when the view changes.
+   * Reset the visible category and search value when the view changes.
    */
   useEffect(() => {
     setVisibleCategory(undefined);
+    setSearchValue('');
   }, [view]);
 
   return (
@@ -121,7 +184,8 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ open, onClose }) => {
                   <SearchInput
                     ref={searchInputRef}
                     value={searchValue}
-                    onChange={setSearchValue}
+                    onChange={handleChangeSearchValue}
+                    onKeyDown={handleSearchKeyDown}
                     flex="1 0 0"
                   />
                 </Flex>
@@ -144,11 +208,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ open, onClose }) => {
             {view === 'all' ? (
               <Box px="md">
                 {displayAddNewItemRecord && (
-                  <ItemRecord
-                    name={searchValue}
-                    quantity={0}
-                    onAdd={() => addItem({ name: searchValue })}
-                  />
+                  <ItemRecord name={searchValue} quantity={0} onAdd={handleAddNewItem} />
                 )}
                 {filteredItems.map((item) => (
                   <ItemRecord
@@ -204,7 +264,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ open, onClose }) => {
               </>
             ) : (
               <Box px="md">
-                {categories.map((category) => (
+                {filteredCategories.map((category) => (
                   <CategoryRecord
                     key={category.id}
                     name={category.name}
@@ -212,11 +272,19 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ open, onClose }) => {
                     onClick={() => setVisibleCategory(category)}
                   />
                 ))}
-                <CategoryRecord
-                  name="Uncategorised"
-                  icon={uncategorisedItemIcon}
-                  onClick={() => setVisibleCategory(null)}
-                />
+                {uncategorisedCategoryName.includes(sanitisedSearchValue) ? (
+                  <CategoryRecord
+                    name={uncategorisedCategoryName}
+                    icon={uncategorisedItemIcon}
+                    onClick={() => setVisibleCategory(null)}
+                  />
+                ) : (
+                  filteredCategories.length === 0 && (
+                    <Text c="gray" mt="md" w="100%" ta="center">
+                      No categories found
+                    </Text>
+                  )
+                )}
               </Box>
             )}
           </Modal.Body>
@@ -254,5 +322,7 @@ const CategoryRecord: React.FC<CategoryRecordProps> = ({ name, icon, onClick }) 
     </Flex>
   );
 };
+
+const uncategorisedCategoryName = 'uncategorised';
 
 type View = 'all' | 'categories';

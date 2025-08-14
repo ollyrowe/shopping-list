@@ -12,12 +12,12 @@ export class ShoppingListService {
     return { items: [] };
   }
 
-  public static addItem(item: Pick<Item, 'name'>) {
+  public static addItem(name: string) {
     const shoppingList = ShoppingListService.getShoppingList();
 
     shoppingList.items.push({
       id: uuidv4(),
-      ...item,
+      name,
       quantity: 1,
     });
 
