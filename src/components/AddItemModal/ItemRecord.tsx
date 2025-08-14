@@ -27,19 +27,21 @@ const ItemRecord: React.FC<ItemRecordProps> = ({ name, quantity, onRemove, onAdd
       </Text>
       <Flex ml="auto" align="center" gap="md">
         {quantity > 1 && <Text c="gray">{quantity}</Text>}
-        <ActionIcon
-          variant="subtle"
-          color={quantity === 0 ? 'gray' : 'red'}
-          onClick={handleRemoveItem}
-        >
-          {quantity === 0 ? (
-            <IconTrash size={20} />
-          ) : quantity > 1 ? (
-            <IconMinus size={20} />
-          ) : (
-            <IconX size={20} />
-          )}
-        </ActionIcon>
+        {onRemove && (
+          <ActionIcon
+            variant="subtle"
+            color={quantity === 0 ? 'gray' : 'red'}
+            onClick={handleRemoveItem}
+          >
+            {quantity === 0 ? (
+              <IconTrash size={20} />
+            ) : quantity > 1 ? (
+              <IconMinus size={20} />
+            ) : (
+              <IconX size={20} />
+            )}
+          </ActionIcon>
+        )}
       </Flex>
     </Flex>
   );
