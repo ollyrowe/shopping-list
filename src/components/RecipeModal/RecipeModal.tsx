@@ -15,6 +15,7 @@ import {
   Button,
   Divider,
   Flex,
+  FocusTrap,
   Modal,
   NumberInput,
   Table,
@@ -480,6 +481,8 @@ const RecipeModal: React.FC<RecipeModalProps> = ({
               </Modal.Body>
             </>
           )}
+          {/* If the modal is not in create mode, prevent autofocusing on modal contents */}
+          {mode !== 'create' && <FocusTrap.InitialFocus />}
         </Modal.Content>
       </Modal.Root>
       <ConfirmationDrawer
