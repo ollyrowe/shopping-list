@@ -1,3 +1,19 @@
+# [1.1.0](https://github.com/ollyrowe/shopping-list/compare/v1.0.3...v1.1.0) (2025-08-14)
+
+
+### Bug Fixes
+
+* fix application scroll issue ([04e2be8](https://github.com/ollyrowe/shopping-list/commit/04e2be89def3a22c596ac147a4b4138fd39282f5))
+* hide remove icon on new item record ([0d365c7](https://github.com/ollyrowe/shopping-list/commit/0d365c7a22fb7b4923be7861eb3d1e1712180eae))
+* prevent recipe modal auto focus on edit ([82f9b6e](https://github.com/ollyrowe/shopping-list/commit/82f9b6e5afb764ae239d4168a8325b82ce2d6d84))
+* trim white space from entity names ([7a15aea](https://github.com/ollyrowe/shopping-list/commit/7a15aea4e49b8a742e4becb6956da5f1debf3f8b))
+
+
+### Features
+
+* add settings modal ([07b7377](https://github.com/ollyrowe/shopping-list/commit/07b7377f7dd2c56ed8f85fd520ef2fdda3d66fc5))
+* allow items to be added using keyboard only ([e58c026](https://github.com/ollyrowe/shopping-list/commit/e58c026ea7bb4dae61292f3c19ab7db82d1270d3))
+
 ## [1.0.3](https://github.com/ollyrowe/shopping-list/compare/v1.0.2...v1.0.3) (2025-08-13)
 
 
