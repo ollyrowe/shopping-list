@@ -66,7 +66,11 @@ const RecipeModal: React.FC<RecipeModalProps> = ({
   // Fetch the recipe by ID from the list of recipes
   const recipe = recipes.find((recipe) => recipe.id === recipeId);
 
-  const isRecipeValid = name.trim().length > 0;
+  const sanitisedName = name.trim();
+
+  const sanitisedNewIngredientName = newIngredient.name.trim();
+
+  const isRecipeValid = sanitisedName.length > 0;
 
   const handleEditRecipe = () => {
     setMode('edit');
@@ -75,7 +79,7 @@ const RecipeModal: React.FC<RecipeModalProps> = ({
   const handleCreateRecipe = () => {
     if (isRecipeValid) {
       const newRecipe = {
-        name,
+        name: sanitisedName,
         ingredients,
         color,
         link,
@@ -130,11 +134,11 @@ const RecipeModal: React.FC<RecipeModalProps> = ({
   };
 
   const handleAddNewIngredient = () => {
-    if (newIngredient.name) {
+    if (sanitisedNewIngredientName) {
       setIngredients([
         ...ingredients,
         {
-          name: newIngredient.name,
+          name: sanitisedNewIngredientName,
           quantity: newIngredient.quantity,
           unit: newIngredient.unit,
         },
@@ -362,7 +366,7 @@ const RecipeModal: React.FC<RecipeModalProps> = ({
                     <Table.Td>
                       <ActionIcon
                         onClick={handleAddNewIngredient}
-                        disabled={!newIngredient.name}
+                        disabled={!sanitisedNewIngredientName}
                         variant="subtle"
                         radius="lg"
                       >

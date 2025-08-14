@@ -33,6 +33,8 @@ const CategoryModal: React.FC<CategoryModalProps> = ({ mode, category, open, onC
 
   const [iconSearchValue, setIconSearchValue] = useState('');
 
+  const sanitisedName = name.trim().toLowerCase();
+
   const filteredEmojis = useMemo(() => {
     const searchValue = iconSearchValue.trim().toLowerCase();
 
@@ -46,15 +48,15 @@ const CategoryModal: React.FC<CategoryModalProps> = ({ mode, category, open, onC
   }, [iconSearchValue]);
 
   const handleCreate = () => {
-    if (name.trim()) {
-      createCategory({ name: name.trim(), icon });
+    if (sanitisedName) {
+      createCategory({ name: sanitisedName, icon });
       onClose();
     }
   };
 
   const handleSave = () => {
-    if (category && name.trim()) {
-      updateCategory({ ...category, name: name.trim(), icon });
+    if (category && sanitisedName) {
+      updateCategory({ ...category, name: sanitisedName, icon });
       onClose();
     }
   };
@@ -136,7 +138,7 @@ const CategoryModal: React.FC<CategoryModalProps> = ({ mode, category, open, onC
             <Flex gap="sm" mt="md">
               <Button
                 onClick={mode === 'create' ? handleCreate : handleSave}
-                disabled={!name.trim() || !icon}
+                disabled={!sanitisedName || !icon}
                 fullWidth
               >
                 {mode === 'create' ? 'Create' : 'Save'}
