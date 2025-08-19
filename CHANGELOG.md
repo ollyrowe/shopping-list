@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/ollyrowe/shopping-list/compare/v1.2.0...v1.2.1) (2025-08-19)
+
+
+### Bug Fixes
+
+* fix application scroll issue ([18208b9](https://github.com/ollyrowe/shopping-list/commit/18208b9f5ea50dcf8764359ba6ef28d80ebd46fc))
+
 # [1.2.0](https://github.com/ollyrowe/shopping-list/compare/v1.1.0...v1.2.0) (2025-08-19)
 
 
