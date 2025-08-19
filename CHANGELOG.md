@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/ollyrowe/shopping-list/compare/v1.1.0...v1.2.0) (2025-08-19)
+
+
+### Features
+
+* add basic offline support ([93ca74a](https://github.com/ollyrowe/shopping-list/commit/93ca74a969fd12b67bc859c682caa5478571f498))
+
 # [1.1.0](https://github.com/ollyrowe/shopping-list/compare/v1.0.3...v1.1.0) (2025-08-14)
 
 
