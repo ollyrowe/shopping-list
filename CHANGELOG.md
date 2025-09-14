@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/ollyrowe/shopping-list/compare/v1.2.1...v1.3.0) (2025-09-14)
+
+
+### Features
+
+* add checked item section to list ([02e13d2](https://github.com/ollyrowe/shopping-list/commit/02e13d24fb2711df0e546db834fb31b2a503a256))
+
 ## [1.2.1](https://github.com/ollyrowe/shopping-list/compare/v1.2.0...v1.2.1) (2025-08-19)
 
 
