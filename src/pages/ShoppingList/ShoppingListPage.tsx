@@ -1,5 +1,13 @@
-import React, { useState } from 'react';
-import { IconPlus, IconSearch, IconSortAscendingShapes } from '@tabler/icons-react';
+import React, { useEffect, useState } from 'react';
+import {
+  IconClearAll,
+  IconEye,
+  IconEyeOff,
+  IconPlus,
+  IconSearch,
+  IconSortAscendingShapes,
+} from '@tabler/icons-react';
+import { AnimatePresence, motion, type TargetAndTransition } from 'framer-motion';
 import {
   ActionIcon,
   Box,
@@ -10,7 +18,9 @@ import {
   Progress,
   Text,
   TextInput,
+  useComputedColorScheme,
 } from '@mantine/core';
+import { useLocalStorage } from '@mantine/hooks';
 import AddItemModal from '@/components/AddItemModal';
 import ChangeCategoryModal from '@/components/ChangeCategoryModal';
 import ItemDrawer from '@/components/ItemDrawer';
@@ -22,6 +32,8 @@ import { type Category, type Item } from '@/types';
 const ShoppingListPage: React.FC = () => {
   const { shoppingList, categories, updateItem } = useShoppingList();
 
+  const [items, setItems] = useState<Item[]>(shoppingList.items);
+
   const [displayAddItemModal, setDisplayAddItemModal] = useState(false);
 
   const [displaySortItemsModal, setDisplaySortItemsModal] = useState(false);
@@ -31,6 +43,21 @@ const ShoppingListPage: React.FC = () => {
   const [displayItemDrawer, setDisplayItemDrawer] = useState(false);
 
   const [displayChangeCategoryModal, setDisplayChangeCategoryModal] = useState(false);
+
+  // Whether the checked items are currently being cleared
+  const [isClearing, setIsClearing] = useState(false);
+
+  // The IDs of the items that are currently being cleared
+  const [itemsBeingCleared, setItemsBeingCleared] = useState<Set<string>>(new Set());
+
+  const [areCheckedItemsVisible, setAreCheckedItemsVisible] = useLocalStorage({
+    key: 'checked-items-visible',
+    defaultValue: true,
+  });
+
+  const toggleCheckedItemsVisibility = () => {
+    setAreCheckedItemsVisible((prev) => !prev);
+  };
 
   const handleDisplayItemDrawer = (item: Item) => {
     setSelectedItem(item);
@@ -43,7 +70,52 @@ const ShoppingListPage: React.FC = () => {
   };
 
   const handleCheckItem = (item: Item) => {
-    updateItem({ ...item, checked: !item.checked });
+    /**
+     * Update the local state with a temporary duplicate item with the opposite checked state.
+     *
+     * This allows for a new item to be added before the old one is removed, creating a cleaner animation.
+     */
+    setItems((prev) => [...prev, { ...item, checked: !item.checked }]);
+
+    /**
+     * Use a timeout to ensure the state change made above is reflected before updating the item.
+     */
+    setTimeout(() => {
+      updateItem({ ...item, checked: !item.checked });
+    });
+  };
+
+  const handleClearCheckedItems = async () => {
+    const checkedItemIds = orderedCheckedItems.map((item) => item.id);
+
+    if (checkedItemIds.length === 0) {
+      return;
+    }
+
+    setIsClearing(true);
+
+    // Animate items out one by one
+    for (let i = 0; i < checkedItemIds.length; i++) {
+      const itemId = checkedItemIds[i];
+
+      // Add item to clearing set to trigger exit animation
+      setItemsBeingCleared((prev) => new Set([...prev, itemId]));
+
+      // Wait a moment before proceeding to next item
+      await new Promise((resolve) => setTimeout(resolve, 150));
+    }
+
+    // Wait for the exit animation of the last item to complete
+    await new Promise((resolve) => setTimeout(resolve, itemAnimationDurationSeconds * 1000));
+
+    // Actually remove the items from the list
+    for (const item of orderedCheckedItems) {
+      updateItem({ ...item, quantity: 0 });
+    }
+
+    // Reset state
+    setIsClearing(false);
+    setItemsBeingCleared(new Set());
   };
 
   const handleUpdateSelectedItemCategory = (category: Category) => {
@@ -53,22 +125,54 @@ const ShoppingListPage: React.FC = () => {
   };
 
   // Filter all items for those which have a quantity of at least 1
-  const itemsOnList = shoppingList.items.filter((item) => item.quantity > 0);
+  const itemsOnList = items.filter((item) => item.quantity > 0);
 
-  // Sort the items by the order of categories, and then retain order of item within list
-  const orderedItems = itemsOnList.sort((a, b) => {
-    const categoryAIndex = a.category ? categories.findIndex((c) => c.id === a.category?.id) : -1;
-    const categoryBIndex = b.category ? categories.findIndex((c) => c.id === b.category?.id) : -1;
+  // Separate checked and unchecked items
+  const uncheckedItems = itemsOnList.filter((item) => !item.checked);
+  const checkedItems = itemsOnList.filter((item) => item.checked);
 
-    if (categoryAIndex !== categoryBIndex) {
-      return categoryAIndex - categoryBIndex;
-    }
+  // Sort the items inline within the original list then sort by category
+  const sortItemsByCategory = (items: Item[]) => {
+    return items
+      .sort((a, b) => {
+        const indexA = shoppingList.items.findIndex((item) => item.id === a.id);
+        const indexB = shoppingList.items.findIndex((item) => item.id === b.id);
 
-    return 1;
-  });
+        return indexA - indexB;
+      })
+      .sort((a, b) => {
+        const categoryAIndex = a.category
+          ? categories.findIndex((c) => c.id === a.category?.id)
+          : -1;
+        const categoryBIndex = b.category
+          ? categories.findIndex((c) => c.id === b.category?.id)
+          : -1;
+
+        if (categoryAIndex !== categoryBIndex) {
+          return categoryAIndex - categoryBIndex;
+        }
+
+        return 1;
+      });
+  };
+
+  const orderedUncheckedItems = sortItemsByCategory(uncheckedItems);
+  const orderedCheckedItems = sortItemsByCategory(checkedItems);
 
   // The progress of the total number of items checked off the list
   const progress = (itemsOnList.filter((item) => item.checked).length / itemsOnList.length) * 100;
+
+  const colorScheme = useComputedColorScheme();
+
+  const checkedItemColor =
+    colorScheme === 'light' ? 'var(--mantine-color-gray-0)' : 'var(--mantine-color-dark-8)';
+
+  /**
+   * Synchronise the items within the internal state.
+   */
+  useEffect(() => {
+    setItems(shoppingList.items);
+  }, [shoppingList.items]);
 
   return (
     <>
@@ -103,21 +207,53 @@ const ShoppingListPage: React.FC = () => {
         </Button>
       </Box>
       <Progress value={progress} transitionDuration={400} color="green" radius="none" h="4px" />
-      <Flex direction="column" h="100%" style={{ overflow: 'auto' }}>
-        {orderedItems.map((item) => (
-          <ItemRecord
-            key={item.id}
-            name={item.name}
-            quantity={item.quantity}
-            unit={item.unit}
-            checked={item.checked}
-            icon={item.category ? item.category.icon : uncategorisedItemIcon}
-            onClick={() => handleDisplayItemDrawer(item)}
-            onCheck={() => handleCheckItem(item)}
-            onChangeCategory={() => handleDisplayChangeCategoryModal(item)}
-          />
-        ))}
-        {orderedItems.length === 0 && (
+      <Flex direction="column" h="100%" style={{ overflow: 'auto' }} bg={checkedItemColor}>
+        <AnimatePresence initial={false}>
+          {orderedUncheckedItems.map((item) => (
+            <ItemRecord
+              key={`${item.id}-${item.checked}`}
+              item={item}
+              isBeingCleared={itemsBeingCleared.has(item.id)}
+              onClick={() => handleDisplayItemDrawer(item)}
+              onCheck={() => handleCheckItem(item)}
+              onChangeCategory={() => handleDisplayChangeCategoryModal(item)}
+            />
+          ))}
+          {checkedItems.length > 0 && (
+            <motion.div key="checked-items" layout>
+              <Flex px="md" py="xs" bg={checkedItemColor} align="center">
+                <ActionIcon variant="subtle" color="gray" onClick={toggleCheckedItemsVisibility}>
+                  {areCheckedItemsVisible ? <IconEye size={16} /> : <IconEyeOff size={16} />}
+                </ActionIcon>
+                <Text c="gray" size="sm" fw="bold" w="100%" ta="center">
+                  Checked Items ({checkedItems.length})
+                </Text>
+                <ActionIcon
+                  variant="subtle"
+                  color="gray"
+                  onClick={handleClearCheckedItems}
+                  disabled={isClearing}
+                >
+                  <IconClearAll size={16} />
+                </ActionIcon>
+              </Flex>
+              <Divider />
+            </motion.div>
+          )}
+          {areCheckedItemsVisible &&
+            orderedCheckedItems.map((item) => (
+              <ItemRecord
+                key={`${item.id}-${item.checked}`}
+                item={item}
+                visible={areCheckedItemsVisible}
+                isBeingCleared={itemsBeingCleared.has(item.id)}
+                onClick={() => handleDisplayItemDrawer(item)}
+                onCheck={() => handleCheckItem(item)}
+                onChangeCategory={() => handleDisplayChangeCategoryModal(item)}
+              />
+            ))}
+        </AnimatePresence>
+        {orderedCheckedItems.length === 0 && orderedUncheckedItems.length === 0 && (
           <Text c="gray" mt="md" w="100%" ta="center">
             Your list is empty
           </Text>
@@ -147,22 +283,18 @@ const ShoppingListPage: React.FC = () => {
 export default ShoppingListPage;
 
 interface ItemRecordProps {
-  name: string;
-  quantity: number;
-  unit?: string;
-  checked?: boolean;
-  icon: string;
+  item: Item;
+  isBeingCleared?: boolean;
+  visible?: boolean;
   onClick?: () => void;
   onCheck?: () => void;
   onChangeCategory?: () => void;
 }
 
 const ItemRecord: React.FC<ItemRecordProps> = ({
-  name,
-  quantity,
-  unit,
-  icon,
-  checked,
+  item,
+  isBeingCleared = false,
+  visible = true,
   onClick,
   onCheck,
   onChangeCategory,
@@ -175,31 +307,77 @@ const ItemRecord: React.FC<ItemRecordProps> = ({
     }
   };
 
+  const colorScheme = useComputedColorScheme();
+
+  const checkedItemColor =
+    colorScheme === 'light' ? 'var(--mantine-color-gray-0)' : 'var(--mantine-color-dark-8)';
+
   return (
-    <Box>
-      <Flex px="md" py="sm" align="center" bg="var(--mantine-color-body)" onClick={onClick}>
-        <Checkbox
-          radius="lg"
-          mr="md"
-          color="green"
-          checked={!!checked}
-          onChange={onCheck}
-          onClick={(e) => e.stopPropagation()}
-        />
-        <Text c="gray" fw="bold" tt="lowercase" mr="auto">
-          {name}
-        </Text>
-        {quantity > 1 && (
-          <Text c="gray" size="sm" mr="md">
-            {quantity}
-            {unit}
+    <motion.div
+      initial={itemInitialAnimation}
+      animate={isBeingCleared ? itemExitAnimation : itemEnterAnimation}
+      exit={visible ? itemExitAnimation : undefined}
+      layout
+    >
+      <Box>
+        <Flex
+          px="md"
+          py="sm"
+          align="center"
+          bg={item.checked ? checkedItemColor : 'var(--mantine-color-body)'}
+          onClick={onClick}
+        >
+          <Checkbox
+            radius="lg"
+            mr="md"
+            color="green"
+            checked={!!item.checked}
+            onChange={onCheck}
+            onClick={(e) => e.stopPropagation()}
+          />
+          <Text c="gray" fw="bold" tt="lowercase" mr="auto">
+            {item.name}
           </Text>
-        )}
-        <ActionIcon variant="subtle" radius="xl" color="gray" onClick={handleChangeCategory}>
-          {icon}
-        </ActionIcon>
-      </Flex>
-      <Divider />
-    </Box>
+          {item.quantity > 1 && (
+            <Text c="gray" size="sm" mr="md">
+              {item.quantity}
+              {item.unit}
+            </Text>
+          )}
+          <ActionIcon variant="subtle" radius="xl" color="gray" onClick={handleChangeCategory}>
+            {item.category ? item.category.icon : uncategorisedItemIcon}
+          </ActionIcon>
+        </Flex>
+        <Divider />
+      </Box>
+    </motion.div>
   );
+};
+
+const itemAnimationDurationSeconds = 0.3;
+
+const itemInitialAnimation: TargetAndTransition = {
+  opacity: 1,
+  scale: 1,
+  x: -100,
+};
+
+const itemExitAnimation: TargetAndTransition = {
+  opacity: 0,
+  scale: 0.8,
+  x: -100,
+  transition: {
+    duration: itemAnimationDurationSeconds,
+    ease: 'easeInOut',
+  },
+};
+
+const itemEnterAnimation: TargetAndTransition = {
+  opacity: 1,
+  scale: 1,
+  x: 0,
+  transition: {
+    duration: itemAnimationDurationSeconds,
+    ease: 'easeInOut',
+  },
 };
