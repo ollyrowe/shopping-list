@@ -1,3 +1,12 @@
+## [1.3.1](https://github.com/ollyrowe/shopping-list/compare/v1.3.0...v1.3.1) (2025-09-14)
+
+
+### Bug Fixes
+
+* add reduce quantity button disabled state ([313f594](https://github.com/ollyrowe/shopping-list/commit/313f594da3fc440745b2629c3e16daeb6d703b91))
+* ensure newly added items are unchecked ([e4d8057](https://github.com/ollyrowe/shopping-list/commit/e4d8057cd10852823073fdb4aec8738200f6d7cb))
+* increase item record checkbox hit box radius ([072f7f6](https://github.com/ollyrowe/shopping-list/commit/072f7f6435f8aedfe763dc5b318d76dc940e4573))
+
 # [1.3.0](https://github.com/ollyrowe/shopping-list/compare/v1.2.1...v1.3.0) (2025-09-14)
 
 
