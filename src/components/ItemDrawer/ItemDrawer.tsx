@@ -96,7 +96,8 @@ const ItemDrawer: React.FC<ItemDrawerProps> = ({ open, onClose, onChange, item }
                 <ActionIcon
                   radius="lg"
                   size="lg"
-                  onClick={() => setQuantity(quantity > 0 ? quantity - 1 : 0)}
+                  onClick={() => setQuantity(quantity - 1)}
+                  disabled={quantity === 0}
                 >
                   <IconMinus size={24} />
                 </ActionIcon>
