@@ -50,20 +50,20 @@ const ItemRecord: React.FC<ItemRecordProps> = ({
     >
       <Box>
         <Flex
-          px="md"
-          py="sm"
           align="center"
           bg={item.checked ? checkedItemColor : 'var(--mantine-color-body)'}
           onClick={onClick}
         >
-          <Checkbox
-            radius="lg"
-            mr="md"
-            color="green"
+          <Checkbox.Card
             checked={!!item.checked}
             onChange={onCheck}
             onClick={(e) => e.stopPropagation()}
-          />
+            bd="none"
+            w="auto"
+            p="md"
+          >
+            <Checkbox.Indicator radius="lg" color="green" />
+          </Checkbox.Card>
           <Text c="gray" fw="bold" tt="lowercase" mr="auto">
             {item.name}
           </Text>
