@@ -89,12 +89,12 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ open, onClose }) => {
   const displayAddNewItemRecord = searchValue.trim() && !existingItem;
 
   const handleAddItem = (item: Item) => {
-    updateItem({ ...item, quantity: item.quantity + 1 });
+    updateItem({ ...item, quantity: item.quantity + 1, checked: false });
   };
 
   const handleRemoveItem = (item: Item) => {
     if (item.quantity > 0) {
-      updateItem({ ...item, quantity: item.quantity - 1 });
+      updateItem({ ...item, quantity: item.quantity - 1, checked: false });
     } else {
       setItemToDelete(item);
     }
@@ -134,7 +134,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ open, onClose }) => {
 
   const handleAddNewItem = () => {
     if (existingItem) {
-      updateItem({ ...existingItem, quantity: existingItem.quantity + 1 });
+      updateItem({ ...existingItem, quantity: existingItem.quantity + 1, checked: false });
     } else {
       addItem(sanitisedSearchValue);
     }
