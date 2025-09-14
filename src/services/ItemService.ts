@@ -1,74 +1,58 @@
 import { v4 as uuidv4 } from 'uuid';
-import type { Category, Item, ShoppingList } from '@/types';
+import type { Category, Item } from '@/types';
 
-export class ShoppingListService {
-  public static getShoppingList(): ShoppingList {
-    const shoppingList = localStorage.getItem(shoppingListLocalStorageKey);
+export class ItemService {
+  public static getItems(): Item[] {
+    const items = localStorage.getItem(itemsLocalStorageKey);
 
-    if (shoppingList) {
-      return JSON.parse(shoppingList);
+    if (items) {
+      return JSON.parse(items);
     }
 
-    return { items: [] };
+    return [];
   }
 
   public static addItem(name: string) {
-    const shoppingList = ShoppingListService.getShoppingList();
+    const items = ItemService.getItems();
 
-    shoppingList.items.push({
-      id: uuidv4(),
-      name,
-      quantity: 1,
-    });
+    items.push({ id: uuidv4(), name, quantity: 1 });
 
-    localStorage.setItem(shoppingListLocalStorageKey, JSON.stringify(shoppingList));
+    localStorage.setItem(itemsLocalStorageKey, JSON.stringify(items));
   }
 
   public static updateItem(item: Item) {
-    const shoppingList = ShoppingListService.getShoppingList();
+    const items = ItemService.getItems();
 
-    shoppingList.items = shoppingList.items.map((existingItem) =>
+    const updatedItems = items.map((existingItem) =>
       existingItem.id === item.id ? { ...existingItem, ...item } : existingItem
     );
 
-    localStorage.setItem(shoppingListLocalStorageKey, JSON.stringify(shoppingList));
+    localStorage.setItem(itemsLocalStorageKey, JSON.stringify(updatedItems));
   }
 
   public static deleteItem(item: Item) {
-    const shoppingList = ShoppingListService.getShoppingList();
+    const items = ItemService.getItems();
 
-    shoppingList.items = shoppingList.items.filter((i) => i.id !== item.id);
+    const updatedItems = items.filter((i) => i.id !== item.id);
 
-    localStorage.setItem(shoppingListLocalStorageKey, JSON.stringify(shoppingList));
-  }
-
-  public static checkItem(item: Item) {
-    const shoppingList = ShoppingListService.getShoppingList();
-
-    shoppingList.items = shoppingList.items.map((existingItem) =>
-      existingItem.id === item.id
-        ? { ...existingItem, checked: !existingItem.checked }
-        : existingItem
-    );
-
-    localStorage.setItem(shoppingListLocalStorageKey, JSON.stringify(shoppingList));
+    localStorage.setItem(itemsLocalStorageKey, JSON.stringify(updatedItems));
   }
 
   public static reorderItems(sourceId: string, destinationId: string) {
-    const shoppingList = ShoppingListService.getShoppingList();
+    const items = ItemService.getItems();
 
-    const sourceIndex = shoppingList.items.findIndex((item) => item.id === sourceId);
-    const destinationIndex = shoppingList.items.findIndex((item) => item.id === destinationId);
+    const sourceIndex = items.findIndex((item) => item.id === sourceId);
+    const destinationIndex = items.findIndex((item) => item.id === destinationId);
 
     if (sourceIndex === -1 || destinationIndex === -1 || sourceIndex === destinationIndex) {
       return;
     }
 
-    const [movedItem] = shoppingList.items.splice(sourceIndex, 1);
+    const [movedItem] = items.splice(sourceIndex, 1);
 
-    shoppingList.items.splice(destinationIndex, 0, movedItem);
+    items.splice(destinationIndex, 0, movedItem);
 
-    localStorage.setItem(shoppingListLocalStorageKey, JSON.stringify(shoppingList));
+    localStorage.setItem(itemsLocalStorageKey, JSON.stringify(items));
   }
 
   public static getCategories(): Category[] {
@@ -82,7 +66,7 @@ export class ShoppingListService {
   }
 
   public static createCategory(category: Omit<Category, 'id'>) {
-    const categories = ShoppingListService.getCategories();
+    const categories = ItemService.getCategories();
     const newCategory = { id: uuidv4(), ...category };
 
     categories.push(newCategory);
@@ -93,7 +77,7 @@ export class ShoppingListService {
   }
 
   public static updateCategory(category: { id: string; name: string; icon: string }) {
-    const categories = ShoppingListService.getCategories();
+    const categories = ItemService.getCategories();
 
     const updatedCategories = categories.map((existingCategory) =>
       existingCategory.id === category.id ? { ...existingCategory, ...category } : existingCategory
@@ -103,7 +87,7 @@ export class ShoppingListService {
   }
 
   public static deleteCategory(category: Category) {
-    const categories = ShoppingListService.getCategories();
+    const categories = ItemService.getCategories();
 
     const updatedCategories = categories.filter((c) => c.id !== category.id);
 
@@ -111,7 +95,7 @@ export class ShoppingListService {
   }
 
   public static reorderCategories(sourceId: string, destinationId: string) {
-    const categories = ShoppingListService.getCategories();
+    const categories = ItemService.getCategories();
 
     const sourceIndex = categories.findIndex((category) => category.id === sourceId);
     const destinationIndex = categories.findIndex((category) => category.id === destinationId);
@@ -127,7 +111,7 @@ export class ShoppingListService {
   }
 }
 
-const shoppingListLocalStorageKey = 'shoppingList';
+const itemsLocalStorageKey = 'items';
 
 const categoriesLocalStorageKey = 'categories';
 

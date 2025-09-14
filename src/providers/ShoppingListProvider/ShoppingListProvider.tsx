@@ -1,9 +1,9 @@
 import React, { use, useMemo, useState } from 'react';
-import { ShoppingListService } from '@/services/ShoppingListService';
-import type { Category, Item, ShoppingList } from '@/types';
+import { ItemService } from '@/services/ItemService';
+import type { Category, Item } from '@/types';
 
 interface ShoppingListContextValue {
-  shoppingList: ShoppingList;
+  items: Item[];
   addItem: (name: string) => void;
   updateItem: (item: Item) => void;
   deleteItem: (item: Item) => void;
@@ -16,7 +16,7 @@ interface ShoppingListContextValue {
 }
 
 const ShoppingListContext = React.createContext<ShoppingListContextValue>({
-  shoppingList: { items: [] },
+  items: [],
   addItem: () => {},
   updateItem: () => {},
   deleteItem: () => {},
@@ -33,59 +33,57 @@ interface ShoppingListProviderProps {
 }
 
 const ShoppingListProvider: React.FC<ShoppingListProviderProps> = ({ children }) => {
-  const [shoppingList, setShoppingList] = useState<ShoppingList>(
-    ShoppingListService.getShoppingList()
-  );
+  const [items, setItems] = useState(ItemService.getItems());
 
-  const [categories, setCategories] = useState(ShoppingListService.getCategories());
+  const [categories, setCategories] = useState(ItemService.getCategories());
 
   const addItem = (name: string) => {
-    ShoppingListService.addItem(name);
+    ItemService.addItem(name);
 
-    setShoppingList(ShoppingListService.getShoppingList());
+    setItems(ItemService.getItems());
   };
 
   const updateItem = (item: Item) => {
-    const existingItem = shoppingList.items.find((i) => i.id === item.id);
+    const existingItem = items.find((i) => i.id === item.id);
     if (existingItem) {
-      ShoppingListService.updateItem(item);
-      setShoppingList(ShoppingListService.getShoppingList());
+      ItemService.updateItem(item);
+      setItems(ItemService.getItems());
     }
   };
 
   const deleteItem = (item: Item) => {
-    ShoppingListService.deleteItem(item);
-    setShoppingList(ShoppingListService.getShoppingList());
+    ItemService.deleteItem(item);
+    setItems(ItemService.getItems());
   };
 
   const reorderItems = (sourceId: string, destinationId: string) => {
-    ShoppingListService.reorderItems(sourceId, destinationId);
-    setShoppingList(ShoppingListService.getShoppingList());
+    ItemService.reorderItems(sourceId, destinationId);
+    setItems(ItemService.getItems());
   };
 
   const createCategory = (category: Omit<Category, 'id'>) => {
-    const newCategory = ShoppingListService.createCategory(category);
+    const newCategory = ItemService.createCategory(category);
     setCategories((prevCategories) => [...prevCategories, newCategory]);
   };
 
   const updateCategory = (category: Category) => {
-    ShoppingListService.updateCategory(category);
-    setCategories(ShoppingListService.getCategories());
+    ItemService.updateCategory(category);
+    setCategories(ItemService.getCategories());
   };
 
   const deleteCategory = (category: Category) => {
-    ShoppingListService.deleteCategory(category);
-    setCategories(ShoppingListService.getCategories());
+    ItemService.deleteCategory(category);
+    setCategories(ItemService.getCategories());
   };
 
   const reorderCategories = (sourceId: string, destinationId: string) => {
-    ShoppingListService.reorderCategories(sourceId, destinationId);
-    setCategories(ShoppingListService.getCategories());
+    ItemService.reorderCategories(sourceId, destinationId);
+    setCategories(ItemService.getCategories());
   };
 
   const value = useMemo(
     () => ({
-      shoppingList,
+      items,
       addItem,
       updateItem,
       deleteItem,
@@ -96,7 +94,7 @@ const ShoppingListProvider: React.FC<ShoppingListProviderProps> = ({ children })
       deleteCategory,
       reorderCategories,
     }),
-    [shoppingList, categories]
+    [items, categories]
   );
 
   return <ShoppingListContext value={value}>{children}</ShoppingListContext>;

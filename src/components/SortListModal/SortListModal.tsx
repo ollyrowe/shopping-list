@@ -23,12 +23,12 @@ interface SortListModalProps {
 }
 
 const SortListModal: React.FC<SortListModalProps> = ({ open, onClose }) => {
-  const { shoppingList, categories, reorderItems, reorderCategories } = useShoppingList();
+  const { items, categories, reorderItems, reorderCategories } = useShoppingList();
 
   const [visibleCategory, setVisibleCategory] = useState<Category>();
 
   const visibleCategoryItems = visibleCategory
-    ? shoppingList.items.filter((item) => item.category?.id === visibleCategory.id)
+    ? items.filter((item) => item.category?.id === visibleCategory.id)
     : [];
 
   // The IDs of items in the current view which can be sorted

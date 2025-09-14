@@ -1,3 +1,3 @@
 export * from './MealPlanService';
 export * from './RecipeService';
-export * from './ShoppingListService';
+export * from './ItemService';

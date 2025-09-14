@@ -20,7 +20,7 @@ interface AddItemModalProps {
 }
 
 const AddItemModal: React.FC<AddItemModalProps> = ({ open, onClose }) => {
-  const { shoppingList, categories, addItem, updateItem, deleteItem } = useShoppingList();
+  const { items, categories, addItem, updateItem, deleteItem } = useShoppingList();
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -39,7 +39,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ open, onClose }) => {
 
   const [itemToDelete, setItemToDelete] = useState<Item>();
 
-  const filteredItems = shoppingList.items
+  const filteredItems = items
     // Filter items based on the search value
     .filter((item) => item.name.toLowerCase().includes(sanitisedSearchValue))
     // Sort items by quantity, with items with a quantity greater than 0 first
@@ -76,7 +76,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ open, onClose }) => {
   );
 
   // The items related to the selected category
-  const visibleCategoryItems = shoppingList.items.filter((item) =>
+  const visibleCategoryItems = items.filter((item) =>
     visibleCategory === null ? !item.category : item.category?.id === visibleCategory?.id
   );
 

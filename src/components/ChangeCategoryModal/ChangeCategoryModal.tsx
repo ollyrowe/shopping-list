@@ -31,7 +31,7 @@ const ChangeCategoryModal: React.FC<ChangeCategoryModalProps> = ({
 }) => {
   const colorScheme = useComputedColorScheme();
 
-  const { shoppingList, categories, deleteCategory } = useShoppingList();
+  const { items, categories, deleteCategory } = useShoppingList();
 
   const [selectedCategory, setSelectedCategory] = useState<Category>();
 
@@ -156,7 +156,7 @@ const ChangeCategoryModal: React.FC<ChangeCategoryModalProps> = ({
                       onClick={(event) => handleConfirmDeleteCategory(event, category)}
                       size="sm"
                       color="gray"
-                      disabled={shoppingList.items.some(
+                      disabled={items.some(
                         (item) => item.category && item.category.id === category.id
                       )}
                     >

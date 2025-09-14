@@ -29,9 +29,9 @@ import { type Category, type Item } from '@/types';
 import ItemRecord, { itemAnimationDurationSeconds } from './ItemRecord';
 
 const ShoppingListPage: React.FC = () => {
-  const { shoppingList, categories, updateItem } = useShoppingList();
+  const { items: shoppingListItems, categories, updateItem } = useShoppingList();
 
-  const [items, setItems] = useState<Item[]>(shoppingList.items);
+  const [items, setItems] = useState<Item[]>(shoppingListItems);
 
   const [displayAddItemModal, setDisplayAddItemModal] = useState(false);
 
@@ -134,8 +134,8 @@ const ShoppingListPage: React.FC = () => {
   const sortItemsByCategory = (items: Item[]) => {
     return items
       .sort((a, b) => {
-        const indexA = shoppingList.items.findIndex((item) => item.id === a.id);
-        const indexB = shoppingList.items.findIndex((item) => item.id === b.id);
+        const indexA = shoppingListItems.findIndex((item) => item.id === a.id);
+        const indexB = shoppingListItems.findIndex((item) => item.id === b.id);
 
         return indexA - indexB;
       })
@@ -167,11 +167,11 @@ const ShoppingListPage: React.FC = () => {
     colorScheme === 'light' ? 'var(--mantine-color-gray-0)' : 'var(--mantine-color-dark-8)';
 
   /**
-   * Synchronise the items within the internal state.
+   * Synchronise the items on the list within the internal state.
    */
   useEffect(() => {
-    setItems(shoppingList.items);
-  }, [shoppingList.items]);
+    setItems(shoppingListItems);
+  }, [shoppingListItems]);
 
   return (
     <>
