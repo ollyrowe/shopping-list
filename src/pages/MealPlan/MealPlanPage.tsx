@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { IconChevronLeft, IconChevronRight, IconTags } from '@tabler/icons-react';
+import { IconChevronLeft, IconChevronRight, IconSnowflake } from '@tabler/icons-react';
 import { ActionIcon, Box, Button, Flex, Group, Progress, Text } from '@mantine/core';
+import FrozenMealsModal from '@/components/FrozenMealsModal';
 import MealCard from '@/components/MealCard';
 import MealSelectionDrawer from '@/components/MealSelectionDrawer';
 import RecipeModal from '@/components/RecipeModal';
@@ -14,6 +15,12 @@ const MealPlanPage: React.FC = () => {
 
   // Offset used to indicate previous or future weeks (negative for previous, positive for future)
   const [visibleWeekOffset, setVisibleWeekOffset] = useState(0);
+
+  const [displayFrozenMealModal, setDisplayFrozenMealModal] = useState(false);
+
+  const handleDisplayFrozenMealModal = () => {
+    setDisplayFrozenMealModal(true);
+  };
 
   return (
     <>
@@ -50,10 +57,10 @@ const MealPlanPage: React.FC = () => {
         <Button
           variant="outline"
           justify="space-between"
-          rightSection={<IconTags size={16} />}
+          rightSection={<IconSnowflake size={16} />}
+          onClick={handleDisplayFrozenMealModal}
           px="xs"
           fullWidth
-          disabled
         >
           Frozen meals
         </Button>
@@ -79,6 +86,10 @@ const MealPlanPage: React.FC = () => {
         open={!!visibleRecipe}
         onClose={() => setVisibleRecipe(undefined)}
         recipeId={visibleRecipe?.id}
+      />
+      <FrozenMealsModal
+        open={displayFrozenMealModal}
+        onClose={() => setDisplayFrozenMealModal(false)}
       />
     </>
   );
