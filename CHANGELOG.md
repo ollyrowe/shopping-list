@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/ollyrowe/shopping-list/compare/v1.3.1...v1.4.0) (2025-10-19)
+
+
+### Features
+
+* add frozen meals modal ([12d680c](https://github.com/ollyrowe/shopping-list/commit/12d680c05bdb94743f2cbdae54fee2419217f103))
+
 ## [1.3.1](https://github.com/ollyrowe/shopping-list/compare/v1.3.0...v1.3.1) (2025-09-14)
 
 
